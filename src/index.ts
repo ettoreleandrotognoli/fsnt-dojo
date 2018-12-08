@@ -1,5 +1,6 @@
-import { decorate, renderComponent } from './funcoes'
-import { renderTemplate } from './funcoes'
+import { decorate, renderComponent } from './funcoes';
+import { renderTemplate } from './funcoes';
+
 
 function createElementFromHTML(htmlString) {
     var div = document.createElement("div");
@@ -7,11 +8,20 @@ function createElementFromHTML(htmlString) {
     return div.firstChild;
 }
 
+
+function renderModel() {
+    const component = renderComponent(new DOMParser, template, model);
+    const oldComponent = body[0].firstElementChild;
+    body[0].replaceChild(component, oldComponent);
+};
+
+
+
 const model = decorate({
     value: "1"
 });
 
-model.addListener(console.log)
+model.addListener(console.log);
 
 const template = `
     <div class="container">
@@ -34,15 +44,6 @@ const template = `
 
 const body = document.getElementsByTagName("body");
 const component = createElementFromHTML(template);
-// body[0].append(component);
-
-function renderModel() {
-    const component = renderComponent(new DOMParser, template, model);
-    const oldComponent = body[0].firstElementChild;
-    body[0].replaceChild(component, oldComponent);
-}
-
-
 
 model.addListener(renderModel);
-renderModel()
+renderModel();

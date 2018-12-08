@@ -1,10 +1,10 @@
-import {DOMParser} from 'xmldom'
+import {DOMParser} from 'xmldom';
 export type Listener = Function;
 
 
 export interface Observable {
     listeners: Array<Listener>;
-    addListener(listener: Listener)
+    addListener(listener: Listener);
 }
 
 
@@ -20,7 +20,7 @@ export function decorate<E>(model: E): E & Observable {
         },
         set: (target, fieldName, value) => {
             if (fieldName in observer) {
-                observer[fieldName] = value
+                observer[fieldName] = value;
             } else {
                 target[fieldName] = value
                 observer.publish(target);
@@ -28,7 +28,7 @@ export function decorate<E>(model: E): E & Observable {
             return true;
         },
         has: (target, fieldName) => {
-            return fieldName in target || fieldName in observer
+            return fieldName in target || fieldName in observer;
         }
 
     }
@@ -43,33 +43,32 @@ export class Model {
     public listeners: Listener[] = [];
 
     public addListener(listener: Listener) {
-        this.listeners.push(listener)
-    }
+        this.listeners.push(listener);
+    };
 
     public publish(event: any) {
-        this.listeners.forEach((item) => item(event))
-
-    }
+        this.listeners.forEach((item) => item(event));
+    };
 }
 
 export function renderTemplate(template: string, model: object) {
-    let result = template
+    let result = template;
     Object.entries(model)
         .forEach(([key, value]) => {
             const regex = RegExp('\{\{ *' + key + ' *\}\}', 'g');
-            result = result.replace(regex, value)
+            result = result.replace(regex, value);
         })
-    return result
+    return result;
 }
 
 export function renderComponent(domParser: any, template: string, model: object){
-    const result = renderTemplate(template, model)
-    const element = domParser.parseFromString(result, 'text/html')
+    const result = renderTemplate(template, model);
+    const element = domParser.parseFromString(result, 'text/html');
     Object.entries(model)
     .forEach(([key, value]) => {
         element.querySelector(`[bind="${key}"]`).onchange=((event) => {
-            model[key] = event.target.value
-        })
-    })
-    return element.children[0]
+            model[key] = event.target.value;
+        });
+    });
+    return element.children[0];
 }
