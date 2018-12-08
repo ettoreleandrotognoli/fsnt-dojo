@@ -1,7 +1,9 @@
 
 import { expect } from 'chai';
-import { Model } from '../src/funcoes';
+import { Model, renderComponent } from '../src/funcoes';
 import { decorate} from '../src/funcoes';
+import {renderTemplate} from '../src/funcoes';
+import { DOMParser } from 'xmldom';
 
 describe('Model', () => {
     it('iniciar com lista vazia',()=>{
@@ -43,24 +45,24 @@ describe('decorate', () => {
         const b = decorate(a);
         expect('addListener' in b ).to.equal(true);
         expect('addListener' in a ).to.equal(false);
-    })
+    });
 
     it('"A" acessível', () => {
-        const a = decorate({});
+        const a =decorate({});
         a['name'] = 'test';
         expect(a['name']).to.equal('test');
-    })
+    });
 
     it("addListener must be a function", () =>{
         const a = decorate({});
         expect(typeof a.addListener === 'function').to.true
-    })
+    });
 
     it('addListener must receive a listener', ()=>{
         const a = decorate({});
         const listener = () => {};
         a.addListener(listener)
-    })
+    });
 
 
     it('addListener must add  a listener on listeners', ()=>{
@@ -68,7 +70,7 @@ describe('decorate', () => {
         const listener = () => {};
         a.addListener(listener)
         expect(a.listeners.indexOf(listener) !== -1).to.true
-    })
+    });
 
     it('must be called when set', () => {
         const a = decorate({});
@@ -79,5 +81,24 @@ describe('decorate', () => {
         a.addListener(listener)
         a['field'] = 'value';
         expect(called).to.true
-    })
-})
+    });
+});
+
+describe('Template Tests', () => {
+    it('interpolation', () => {
+        const model = {name:'world'};
+        const template = `hello {{ name }}`;
+        const result = renderTemplate(template,model)
+        expect(result).to.equal('hello world')
+
+    });
+
+    it('DOM Test', () => {
+    
+        const document = '<input id = "id">'
+        const component = renderComponent(new DOMParser, document, {})
+        expect(component.getElementById('id')).to.not.null
+        
+    });
+
+});

@@ -1,4 +1,5 @@
-import {decorate} from './funcoes'
+import { decorate, renderComponent } from './funcoes'
+import { renderTemplate } from './funcoes'
 
 function createElementFromHTML(htmlString) {
     var div = document.createElement("div");
@@ -6,8 +7,8 @@ function createElementFromHTML(htmlString) {
     return div.firstChild;
 }
 
-const model = decorate( {
-    value: "model value"
+const model = decorate({
+    value: "1"
 });
 
 model.addListener(console.log)
@@ -17,19 +18,31 @@ const template = `
     <form>
         <div class="form-group">
             <label> Some Field </label>
-            <input type="text" value="${model.value}" class="form-control" />
+            <input type="text" value="{{ value }}" class="form-control" />
         </div>
         <button type="submit" class="btn btn-primary">Do something</button>
    </form>
+   <form>
+    <div class="form-group">
+        <label> Some Field </label>
+        <input type="text" value="{{ value }}" bind="value" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Do something</button>
+    </form>
    </div>
 `;
 
 const body = document.getElementsByTagName("body");
 const component = createElementFromHTML(template);
-body[0].append(component);
+// body[0].append(component);
+
+function renderModel() {
+    const component = renderComponent(new DOMParser, template, model);
+    const oldComponent = body[0].firstElementChild;
+    body[0].replaceChild(component, oldComponent);
+}
 
 
-let counter = 1;
-setInterval(() => {
-    model.value = `${++counter}`;
-}, 1000);
+
+model.addListener(renderModel);
+renderModel()

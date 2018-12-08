@@ -1,9 +1,12 @@
+import {DOMParser} from 'xmldom'
 export type Listener = Function;
+
 
 export interface Observable {
     listeners: Array<Listener>;
     addListener(listener: Listener)
 }
+
 
 export function decorate<E>(model: E): E & Observable {
     const observer = new Model;
@@ -49,6 +52,24 @@ export class Model {
     }
 }
 
-export function renderTemplate(){
-    
+export function renderTemplate(template: string, model: object) {
+    let result = template
+    Object.entries(model)
+        .forEach(([key, value]) => {
+            const regex = RegExp('\{\{ *' + key + ' *\}\}', 'g');
+            result = result.replace(regex, value)
+        })
+    return result
+}
+
+export function renderComponent(domParser: any, template: string, model: object){
+    const result = renderTemplate(template, model)
+    const element = domParser.parseFromString(result, 'text/html')
+    Object.entries(model)
+    .forEach(([key, value]) => {
+        element.querySelector(`[bind="${key}"]`).onchange=((event) => {
+            model[key] = event.target.value
+        })
+    })
+    return element.children[0]
 }
