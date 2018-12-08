@@ -1,12 +1,16 @@
+import {decorate} from './funcoes'
+
 function createElementFromHTML(htmlString) {
-  var div = document.createElement("div");
-  div.innerHTML = htmlString.trim();
-  return div.firstChild;
+    var div = document.createElement("div");
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
 }
 
-const model = {
-    value : "model value"
-};
+const model = decorate( {
+    value: "model value"
+});
+
+model.addListener(console.log)
 
 const template = `
     <div class="container">
@@ -25,8 +29,7 @@ const component = createElementFromHTML(template);
 body[0].append(component);
 
 
-let counter = 0;
+let counter = 1;
 setInterval(() => {
     model.value = `${++counter}`;
-    console.log(counter);
 }, 1000);
